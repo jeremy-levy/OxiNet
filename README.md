@@ -25,3 +25,18 @@ Run with default parameters:
 
 
     $ python3 OxiNet_API.py 354
+
+Requirements
+------- 
+    Python 3.7 and above.
+    
+    numpy==1.21.6
+    keras==2.11.0
+    tensorflow==2.11.0
+    tqdm==4.65.0
+    joblib==1.2.0
+    pandas==1.3.5
+
+To install the requirements, use:
+    
+    $ pip3 install -r requirements.txt
