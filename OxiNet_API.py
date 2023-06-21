@@ -52,17 +52,18 @@ def apply_oxinet(oximetry_signal, oximetry_scaler, params, model):
     return ahi_predicted
 
 
-def run_model(oximetry_signal):
+def run_model(oximetry_signal, dir_model_path):
     """
     Run the OxiNet model, for AHI prediction from oximetry time series
 
     :param oximetry_signal: Oximetry signal. Numpy array of shape (len_signal, 1).
                             Needs to be raw data, no pre-processed.
+    :param dir_model_path: path to the directory with the model inside.
     """
 
-    params_path = os.path.join('saved_model', 'oxinet_config.csv')
-    model_path = os.path.join('saved_model', 'duplo_1.h5')
-    scaler_path = os.path.join('saved_model', 'oximetry_scaler.joblib')
+    params_path = os.path.join(dir_model_path, 'oxinet_config.csv')
+    model_path = os.path.join(dir_model_path, 'duplo_1.h5')
+    scaler_path = os.path.join(dir_model_path, 'oximetry_scaler.joblib')
 
     oximetry_scaler, params, model = load_(params_path, model_path, scaler_path)
     oximetry_signal = preprocess_oximetry(oximetry_signal, params)
@@ -75,7 +76,6 @@ def run_model(oximetry_signal):
 def load_sleep_stages(sleep_stage_path, oximetry_path):
     sleep_stages = np.load(sleep_stage_path)
     oximetry_signal = np.load(oximetry_path)
-    print(len(sleep_stages), len(oximetry_signal))
 
     if sleep_stages.shape[0] < oximetry_signal.shape[0]:
         sleep_stages = np.concatenate((sleep_stages, np.zeros(shape=oximetry_signal.shape[0] - sleep_stages.shape[0])))
@@ -93,14 +93,16 @@ def load_sleep_stages(sleep_stage_path, oximetry_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_signal', type=str, help='Name of the input recording', default='354'),
+    parser.add_argument('input_signal', type=str, help='Name of the input recording.'),
+    parser.add_argument('model_path', type=str, help='The path to the pre-trained model for inference.',
+                        default='saved_model'),
     args = parser.parse_args()
 
     oximetry_path = os.path.join('data', 'spo2', args.input_signal + '.npy')
     sleep_stage_path = os.path.join('data', 'sleep_stages', args.input_signal + '.npy')
     sleep_stages, oximetry = load_sleep_stages(sleep_stage_path, oximetry_path)
 
-    run_model(oximetry)
+    run_model(oximetry, args.model_path)
 
 
 if __name__ == '__main__':
