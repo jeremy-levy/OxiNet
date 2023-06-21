@@ -1,3 +1,7 @@
+The software is provided for academic research only under the GNU GPL license
+
+
+
 OxiNet
 -----
 Pre-trained model for the diagnosis of obstructive sleep apnea from the nocturnal oximetry time series.
