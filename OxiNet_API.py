@@ -69,40 +69,20 @@ def run_model(oximetry_signal, dir_model_path):
     oximetry_signal = preprocess_oximetry(oximetry_signal, params)
     ahi = apply_oxinet(oximetry_signal, oximetry_scaler, params, model)[2][0][0]
 
-    print(ahi)
     return ahi
-
-
-def load_sleep_stages(sleep_stage_path, oximetry_path):
-    sleep_stages = np.load(sleep_stage_path)
-    oximetry_signal = np.load(oximetry_path)
-
-    if sleep_stages.shape[0] < oximetry_signal.shape[0]:
-        sleep_stages = np.concatenate((sleep_stages, np.zeros(shape=oximetry_signal.shape[0] - sleep_stages.shape[0])))
-    elif sleep_stages.shape[0] > oximetry_signal.shape[0]:
-        sleep_stages = sleep_stages[0: oximetry_signal.shape[0]]
-    assert sleep_stages.shape[0] == oximetry_signal.shape[0]
-
-    itemindex = np.where(sleep_stages != 0)[0]
-
-    if len(itemindex) != 1:
-        oximetry_signal = oximetry_signal[itemindex[0]: itemindex[-1]]
-
-    return sleep_stages, oximetry_signal
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input_signal', type=str, help='Name of the input recording.'),
     parser.add_argument('model_path', type=str, help='The path to the pre-trained model for inference.',
-                        default='saved_model'),
+                        default='saved_model')
     args = parser.parse_args()
 
-    oximetry_path = os.path.join('data', 'spo2', args.input_signal + '.npy')
-    sleep_stage_path = os.path.join('data', 'sleep_stages', args.input_signal + '.npy')
-    sleep_stages, oximetry = load_sleep_stages(sleep_stage_path, oximetry_path)
+    oximetry = np.load(os.path.join('sample_data', args.input_signal + '.npy'))
+    ahi = run_model(oximetry, args.model_path)
 
-    run_model(oximetry, args.model_path)
+    print('Estimated AHI is ', ahi)
 
 
 if __name__ == '__main__':
