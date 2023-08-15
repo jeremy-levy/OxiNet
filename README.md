@@ -30,7 +30,7 @@ Examples
 Run with default parameters:
 
 
-    $ python3 OxiNet_API.py 354
+    $ python3 OxiNet_API.py 354 saved_model
 
 Requirements
 ------- 
@@ -46,3 +46,8 @@ Requirements
 To install the requirements, use:
     
     $ pip3 install -r requirements.txt
+	
+An exe file is also available, to avoid installing the Python environment. To run it, just run the following command line:
+
+
+    $ .\OxiNet_API.exe 354 saved_model
